@@ -109,6 +109,32 @@ export default function Comments({
     [slug, taskNumber, mutateTask, t]
   );
 
+  const handleReact = useCallback(
+    async (commentId: number, emoji: string) => {
+      try {
+        const res = await fetch(
+          `/api/teams/${slug}/tasks/${taskNumber}/reactions`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ commentId, emoji }),
+          }
+        );
+
+        const { error } = await res.json();
+        if (!res.ok || error) {
+          toast.error(error?.message || t('errors.requestFailed'));
+          return;
+        }
+
+        mutateTask();
+      } catch {
+        toast.error(t('errors.unexpectedError'));
+      }
+    },
+    [slug, taskNumber, mutateTask, t]
+  );
+
   const handleDeleteComment = useCallback(
     async (id: number | null) => {
       if (!id) return;
@@ -138,24 +164,33 @@ export default function Comments({
   );
 
   return (
-    <div className="p-5">
-      <div className="mt-[30px]">
-        {task.comments
-          .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt))
-          .map((comment) => (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              slug={slug}
-              commentToEdit={commentToEdit}
-              setCommentToEdit={setCommentToEdit}
-              updateComment={handleUpdateComment}
-              deleteComment={onDeleteClick}
-            />
-          ))}
-      </div>
+    <div>
+      {task.comments.length > 0 && (
+        <div className="mb-4 divide-y divide-slate-100 dark:divide-slate-700/60">
+          {task.comments
+            .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt))
+            .map((comment) => (
+              <Comment
+                key={comment.id}
+                comment={comment}
+                slug={slug}
+                commentToEdit={commentToEdit}
+                setCommentToEdit={setCommentToEdit}
+                updateComment={handleUpdateComment}
+                deleteComment={onDeleteClick}
+                onReact={handleReact}
+              />
+            ))}
+        </div>
+      )}
       <AccessControl resource="task" actions={['update']} slug={slug}>
-        <div className="mt-4">
+        <div
+          className={
+            task.comments.length > 0
+              ? 'pt-1 border-t border-slate-100 dark:border-slate-700/60'
+              : ''
+          }
+        >
           <CreateCommentForm handleCreate={handleCreateComment} />
         </div>
       </AccessControl>

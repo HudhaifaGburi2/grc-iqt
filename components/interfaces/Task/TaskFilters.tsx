@@ -1,6 +1,6 @@
 import { MultiSelect } from '@/components/shadcn/ui/multi-select';
 import { useTranslation } from 'next-i18next';
-import { taskModuleKeys } from '@/lib/tasks';
+import { taskModuleKeys, taskPriorities } from '@/lib/tasks';
 
 const moduleLabels: Record<(typeof taskModuleKeys)[number], string> = {
   rpa_procedure: 'RPA',
@@ -13,6 +13,8 @@ const moduleLabels: Record<(typeof taskModuleKeys)[number], string> = {
 type Props = {
   selectedStatuses: string[];
   setSelectedStatuses: (val: string[]) => void;
+  selectedPriorities: string[];
+  setSelectedPriorities: (val: string[]) => void;
   selectedModules: string[];
   setSelectedModules: (val: string[]) => void;
 };
@@ -20,6 +22,8 @@ type Props = {
 const TaskFilters = ({
   selectedStatuses,
   setSelectedStatuses,
+  selectedPriorities,
+  setSelectedPriorities,
   selectedModules,
   setSelectedModules,
 }: Props) => {
@@ -36,10 +40,14 @@ const TaskFilters = ({
     { label: t('task-statuses.done'), value: 'done' },
     { label: t('task-statuses.failed'), value: 'failed' },
   ];
+  const priorityOptions = taskPriorities.map((priority) => ({
+    label: t(`task-priorities.${priority}`),
+    value: priority,
+  }));
 
   return (
-    <div className="flex flex-wrap gap-4 my-2">
-      <div>
+    <div className="flex flex-wrap gap-2">
+      <div className="flex-1 min-w-[150px]">
         <MultiSelect
           options={statusOptions}
           defaultValue={selectedStatuses}
@@ -49,7 +57,17 @@ const TaskFilters = ({
         />
       </div>
 
-      <div>
+      <div className="flex-1 min-w-[150px]">
+        <MultiSelect
+          options={priorityOptions}
+          defaultValue={selectedPriorities}
+          onValueChange={setSelectedPriorities}
+          placeholder={t('filter-by-priority')}
+          maxCount={3}
+        />
+      </div>
+
+      <div className="flex-1 min-w-[150px]">
         <MultiSelect
           options={moduleOptions}
           defaultValue={selectedModules}

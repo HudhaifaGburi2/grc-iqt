@@ -75,23 +75,33 @@ const NotificationItem = ({
     <div
       className={cn(
         'rounded-md border px-3 py-2 transition-colors',
-        notification.isRead ? 'bg-background' : 'bg-accent/40',
+        notification.isRead
+          ? 'bg-white dark:bg-slate-800'
+          : 'bg-slate-50 dark:bg-slate-700/40',
         compact ? 'text-xs' : 'text-sm'
       )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate font-medium">{notification.title}</p>
-          <p className="mt-0.5 text-xs text-muted-foreground truncate">
+          <div className="font-medium">
+            {notification.title?.split('\n').map((line, i) => (
+              <p key={i} className="truncate">
+                {line}
+              </p>
+            ))}
+          </div>
+          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 truncate">
             {notification.body}
           </p>
         </div>
         {!notification.isRead && (
-          <span className="mt-1 h-2 w-2 rounded-full bg-blue-500" />
+          <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
         )}
       </div>
       {timeLabel && (
-        <p className="mt-1 text-[10px] text-muted-foreground">{timeLabel}</p>
+        <p className="mt-1 text-[10px] text-slate-500 dark:text-slate-400">
+          {timeLabel}
+        </p>
       )}
     </div>
   );
