@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "organizational": {
+      "label": "الضوابط التنظيمية"
+    },
+    "people": {
+      "label": "الضوابط البشرية"
+    },
+    "physical": {
+      "label": "الضوابط المادية"
+    },
+    "technological": {
+      "label": "الضوابط التقنية"
+    }
+  }
+}
